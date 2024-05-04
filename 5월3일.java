@@ -1,4 +1,4 @@
-//코딩테스트 공부
+//코딩테스트 공부 풀이
 
 class Solution {
     public String solution(String[] storage, int[] num) {
