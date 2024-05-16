@@ -1,5 +1,5 @@
-//메인 + 중간에 풀다가 생각보다 어려워서 포기.풀이 보면서 작성해둔것 올린것이기에
-//       나중에 다시한번 꼭 풀어볼 것
+/*메인 + 중간에 풀다가 생각보다 어려워서 포기.풀이 보면서 작성해둔것 올린것이기에
+       나중에 다시한번 꼭 풀어볼 것 */
 import java.util.ArrayList;
 
 public class Main {
@@ -58,8 +58,6 @@ public class Main {
 
 
 // Student 클래스
-package Hellojava;
-
 public class Student {
 
 	private String name;
@@ -86,5 +84,4 @@ public class Student {
 		this.no = no;
 	}
 	
-
 }
