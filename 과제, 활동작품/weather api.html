@@ -47,7 +47,7 @@
     <script>
         async function fetchWeather() {
             const cityName = "Suncheon";  //도시 이름은 영어만 인식함 
-            const apiKey = "c4757c5c0a7e333405504ce6e19616cf"; // 실제 API 키로 바꾸세요.
+            const apiKey = "my_api"; // 실제 API 키로 바꾸세요.
             const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${apiKey}&units=metric&lang=kr`;
             try {
                 const response = await fetch(apiUrl);
