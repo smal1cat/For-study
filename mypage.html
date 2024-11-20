@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>마이페이지</title>
+  <link rel="stylesheet" href="mypage.css">
+  <style>
+    /* 로그아웃 버튼 스타일 */
+    #logout-button {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background-color: #4CAF50; /* 초록색 */
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    #logout-button:hover {
+      background-color: #45a049; /* hover 효과 */
+    }
+  </style>
+</head>
+<body>
+  <h2>마이페이지</h2>
+  <p>아이디: 사용자123</p>
+  <p>이메일: user@example.com</p>
+
+  <h3>판매 완료된 물품</h3>
+  <table id="order-table">
+    <thead>
+      <tr>
+        <th>판매 ID</th>
+        <th>물품 ID</th>
+        <th>판매 수량</th>
+        <th>판매 날짜</th>
+        <th>총 판매 금액 (₩)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- 판매 데이터가 여기에 표시됨 -->
+    </tbody>
+  </table>
+
+  <!-- 로그아웃 버튼 -->
+  <button id="logout-button" onclick="logout()">로그아웃</button>
+
+  <script>
+    async function fetchSalesData() {
+      try {
+        // 서버 API 호출
+        const response = await fetch('/sales'); // /sales API에서 판매 데이터 가져오기
+        if (!response.ok) throw new Error('판매 데이터 불러오기 실패');
+        
+        const salesData = await response.json();
+        displaySalesData(salesData);
+      } catch (error) {
+        console.error('판매 데이터를 가져오는 중 오류 발생:', error);
+      }
+    }
+
+    function displaySalesData(salesData) {
+      const tbody = document.querySelector('#order-table tbody');
+      tbody.innerHTML = ''; // 기존 데이터 초기화
+
+      salesData.forEach(sale => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${sale.sale_id}</td> <!-- 판매 ID -->
+          <td>${sale.product_id}</td> <!-- 물품 ID -->
+          <td>${sale.sale_quantity}</td> <!-- 판매 수량 -->
+          <td>${sale.sale_date}</td> <!-- 판매 날짜 -->
+          <td>${sale.total_price}</td> <!-- 총 판매 금액 -->
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // 로그아웃 버튼 클릭 시 로그인 화면으로 이동
+    function logout() {
+      alert("로그아웃되었습니다.");
+      window.location.href = 'login.html'; // 로그인 화면 URL
+    }
+
+    // 페이지 로드 시 판매 데이터 가져오기
+    window.onload = () => {
+      fetchSalesData();
+    };
+  </script>
+</body>
+</html>
