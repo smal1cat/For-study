@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>로그인 및 회원가입</title>
+  <link rel="stylesheet" href="login.css">
+</head>
+<body>
+  <div class="container">
+    <h2 id="form-title">로그인</h2>
+
+    <!-- 로그인 폼 -->
+    <form id="login-form" class="active">
+      <input type="email" id="login-email" placeholder="이메일" required>
+      <input type="password" id="login-password" placeholder="비밀번호" required>
+      <button type="submit">로그인</button>
+      <p>계정이 없으신가요? <a href="#" onclick="showRegister()">회원가입</a></p>
+    </form>
+    
+    <!-- 회원가입 폼 -->
+    <form id="register-form" style="display: none;">
+      <input type="text" id="register-id" placeholder="회원 ID" readonly required>
+      <input type="text" id="register-username" placeholder="사용자 이름" required>
+      <input type="email" id="register-email" placeholder="이메일" required>
+      <input type="password" id="register-password" placeholder="비밀번호" required>
+      <input type="password" id="register-password-confirm" placeholder="비밀번호 확인" required>
+      <input type="text" id="register-date" placeholder="가입 날짜" readonly required>
+      <button type="submit">회원가입</button>
+      <p>이미 계정이 있으신가요? <a href="#" onclick="showLogin()">로그인</a></p>
+    </form>
+  </div>
+
+  <script>
+    const apiUrl = 'http://localhost:3000'; // 서버 API URL
+    let nextId = 211; // 회원 ID 초기값 설정
+
+    // 회원가입 화면 전환 시 회원 ID와 날짜 자동 설정
+    function showRegister() {
+      document.getElementById('login-form').style.display = 'none';
+      document.getElementById('register-form').style.display = 'block';
+      document.getElementById('form-title').innerText = '회원가입';
+
+      // 회원 ID 자동 설정
+      document.getElementById('register-id').value = nextId;
+
+      // 가입 날짜 자동 설정
+      const currentDate = new Date();
+      const formattedDate = currentDate.toISOString().split('T')[0];
+      document.getElementById('register-date').value = formattedDate;
+    }
+
+    // 로그인 화면으로 전환
+    function showLogin() {
+      document.getElementById('register-form').style.display = 'none';
+      document.getElementById('login-form').style.display = 'block';
+      document.getElementById('form-title').innerText = '로그인';
+    }
+
+    // 회원가입 폼 처리
+    document.getElementById('register-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const customerId = document.getElementById('register-id').value;
+      const username = document.getElementById('register-username').value;
+      const email = document.getElementById('register-email').value;
+      const password = document.getElementById('register-password').value;
+      const passwordConfirm = document.getElementById('register-password-confirm').value;
+      const registerDate = document.getElementById('register-date').value;
+
+      if (password !== passwordConfirm) {
+        alert('비밀번호가 일치하지 않습니다.');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${apiUrl}/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ customerId, username, email, password, registerDate }),
+        });
+
+        if (response.ok) {
+          const message = await response.text();
+          alert(message);
+          nextId++; // 회원가입 성공 시 ID 증가
+          showLogin(); // 로그인 화면으로 이동
+        } else {
+          const error = await response.text();
+          alert(`회원가입 실패: ${error}`);
+        }
+      } catch (error) {
+        console.error('회원가입 중 오류 발생:', error);
+        alert('회원가입 중 문제가 발생했습니다. 다시 시도해주세요.');
+      }
+    });
+
+    // 로그인 폼 처리
+    document.getElementById('login-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+
+      try {
+        const response = await fetch(`${apiUrl}/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (response.ok) {
+          const message = await response.text();
+          alert(message);
+          window.location.href = '/list.html'; // 로그인 성공 시 리스트 화면 이동
+        } else {
+          const error = await response.text();
+          alert(`로그인 실패: ${error}`);
+        }
+      } catch (error) {
+        console.error('로그인 중 오류 발생:', error);
+        alert('로그인 중 문제가 발생했습니다. 다시 시도해주세요.');
+      }
+    });
+  </script>
+</body>
+</html>
