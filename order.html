@@ -1,0 +1,116 @@
+<!-- order.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>주문하기</title>
+  <link rel="stylesheet" href="order.css">
+</head>
+<body>
+  <h2>주문하기</h2>
+  <table id="inventory-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>품목</th>
+        <th>수량</th>
+        <th>가격 (₩)</th>
+        <th>장바구니에 추가</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- 임시 데이터 -->
+      <tr>
+        <td>1</td>
+        <td>예시 품목1</td>
+        <td>10</td>
+        <td>1000</td>
+        <td><button onclick="addToCart('예시 품목1', 1000)">장바구니에 추가</button></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>예시 품목2</td>
+        <td>20</td>
+        <td>1500</td>
+        <td><button onclick="addToCart('예시 품목2', 1500)">장바구니에 추가</button></td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>예시 품목3</td>
+        <td>15</td>
+        <td>2000</td>
+        <td><button onclick="addToCart('예시 품목3', 2000)">장바구니에 추가</button></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>장바구니</h3>
+  <table id="cart-table">
+    <thead>
+      <tr>
+        <th>품목</th>
+        <th>수량</th>
+        <th>가격 (₩)</th>
+        <th>총 가격 (₩)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- 장바구니에 추가된 품목이 여기에 표시됨 -->
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3" style="text-align: right; font-weight: bold;">총 가격:</td>
+        <td id="total-price" style="font-weight: bold;">0</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <!-- 주문하기 버튼 추가 -->
+  <button class="order-button" onclick="placeOrder()">주문하기</button>
+
+  <script>
+    const cart = {};
+
+    function addToCart(itemName, price) {
+      if (cart[itemName]) {
+        cart[itemName].quantity += 1;
+      } else {
+        cart[itemName] = { quantity: 1, price: price };
+      }
+      updateCartTable();
+    }
+
+    function updateCartTable() {
+      const tbody = document.querySelector('#cart-table tbody');
+      tbody.innerHTML = '';
+
+      let totalPrice = 0;
+      for (const [itemName, item] of Object.entries(cart)) {
+        const itemTotalPrice = item.price * item.quantity;
+        totalPrice += itemTotalPrice;
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${itemName}</td><td>${item.quantity}</td><td>${item.price}</td><td>${itemTotalPrice}</td>`;
+        tbody.appendChild(row);
+      }
+
+      document.getElementById('total-price').textContent = totalPrice;
+    }
+
+    function placeOrder() {
+      const completedOrders = {};
+      for (const [itemName, item] of Object.entries(cart)) {
+        completedOrders[itemName] = { quantity: item.quantity, price: item.price, status: "주문 완료" };
+      }
+
+      // 주문 완료된 데이터를 로컬 스토리지에 저장하여 마이페이지에서 사용할 수 있도록 함
+      localStorage.setItem('completedOrders', JSON.stringify(completedOrders));
+      alert('주문이 완료되었습니다.');
+      
+      // 장바구니 초기화
+      Object.keys(cart).forEach(key => delete cart[key]);
+      updateCartTable();
+    }
+  </script>
+</body>
+</html>
